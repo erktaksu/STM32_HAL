@@ -1,0 +1,6 @@
+../Core/Src/bmp180.c:45:6:BMP180_Init	2
+../Core/Src/bmp180.c:52:6:BMP180_GetCalibration_Value	1
+../Core/Src/bmp180.c:69:7:BMP180_Get_Temperature	1
+../Core/Src/bmp180.c:78:6:BMP180_Get_Uncompensated_Temperature	1
+../Core/Src/bmp180.c:88:7:BMP180_Get_Pressure	3
+../Core/Src/bmp180.c:120:6:BMP180_Get_Uncompensated_Pressure	1
