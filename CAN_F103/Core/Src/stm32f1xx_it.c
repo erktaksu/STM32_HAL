@@ -55,6 +55,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_adc1;
 extern CAN_HandleTypeDef hcan;
 /* USER CODE BEGIN EV */
 extern uint8_t count;
@@ -62,6 +63,7 @@ extern uint8_t rcount;
 extern CAN_TxHeaderTypeDef pTXHeader;
 extern CAN_RxHeaderTypeDef pRXHeader;
 extern uint32_t pTxMailbox;
+extern int durum;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -208,7 +210,7 @@ void SysTick_Handler(void)
 void EXTI0_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_IRQn 0 */
-    for(int i=0; i<1000000; i++);
+    for(int i=0; i<1000; i++);
   /* USER CODE END EXTI0_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
@@ -222,6 +224,20 @@ void EXTI0_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles DMA1 channel1 global interrupt.
+  */
+void DMA1_Channel1_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel1_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_adc1);
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel1_IRQn 1 */
+}
+
+/**
   * @brief This function handles USB low priority or CAN RX0 interrupts.
   */
 void USB_LP_CAN1_RX0_IRQHandler(void)
@@ -231,7 +247,43 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 0 */
   HAL_CAN_IRQHandler(&hcan);
   /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
-HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, &rcount);
+
+if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, &rcount))==HAL_OK)
+{
+
+
+if(rcount%2==0)
+{
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
+}
+else
+{
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
+}
+
+
+}
+else if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, &rcount))==HAL_ERROR)
+{
+	durum = 1;
+
+}
+else if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, &rcount))==HAL_BUSY)
+{
+	durum = 2;
+
+}
+else if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, &rcount))==HAL_TIMEOUT)
+{
+	durum = 3;
+
+}
+else
+{
+	durum = 10;
+
+}
+
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
 }
 
