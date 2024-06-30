@@ -58,11 +58,12 @@
 extern CAN_HandleTypeDef hcan;
 /* USER CODE BEGIN EV */
 extern uint8_t count;
-extern uint8_t rcount;
+extern uint16_t rcount;
 extern CAN_TxHeaderTypeDef pTXHeader;
 extern CAN_RxHeaderTypeDef pRXHeader;
 extern uint32_t pTxMailbox;
 extern int durum;
+extern uint8_t data[8];
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -233,7 +234,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   HAL_CAN_IRQHandler(&hcan);
   /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
 
-if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, &rcount))==HAL_OK)
+if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, data))==HAL_OK)
 {
 
 
@@ -248,17 +249,17 @@ else
 
 
 }
-else if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, &rcount))==HAL_ERROR)
+else if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, data))==HAL_ERROR)
 {
 	durum = 1;
 
 }
-else if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, &rcount))==HAL_BUSY)
+else if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, data))==HAL_BUSY)
 {
 	durum = 2;
 
 }
-else if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, &rcount))==HAL_TIMEOUT)
+else if((HAL_CAN_GetRxMessage(&hcan, CAN_RX_FIFO0, &pRXHeader, data))==HAL_TIMEOUT)
 {
 	durum = 3;
 

@@ -53,11 +53,18 @@ CAN_RxHeaderTypeDef pRXHeader;
 CAN_FilterTypeDef sfilterconfig;
 uint32_t pTxMailbox;
 uint8_t count;
-uint8_t rcount;
+uint16_t rcount;
 uint8_t adc_value[1]={0};
 uint8_t deger=0;
 int durum;
 int durum2;
+
+
+
+uint16_t adcValue = 0;
+uint8_t adcValueHigh = 0;
+uint8_t adcValueLow = 0;
+uint8_t data[8]; // CAN mesajı veri alanı
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -72,10 +79,10 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void Set_PWM_Duty(uint8_t duty) {
+void Set_PWM_Duty(uint16_t duty) {
     // 0-255 arası gelen duty değerini 0-999 arası bir değere dönüştür
-    uint16_t pulse_length = ((uint32_t)duty * 1000) / 255;
-    TIM1->CCR1 = pulse_length;
+    uint16_t pulse_length = ((uint32_t)duty * 1000) / 4095; //1khz lik ve 12 bit adc olduğu için pwm değerini ayarlıyor
+    TIM1->CCR1 = pulse_length; //değer setlendi
 }
 /* USER CODE END 0 */
 
@@ -153,11 +160,24 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	// HAL_ADC_Start(&hadc1);
  //deger =(uint8_t)(HAL_ADC_GetValue(&hadc1));
+	  // ADC değerini okuyun
+	  //adcValue = HAL_ADC_GetValue(&hadc1);
 
+	  // 12 bitlik ADC değerini iki 8 bitlik parçaya bölün
+	 // adcValueHigh = (adcValue >> 4) & 0xFF; // Yüksek 8 bit 12 bitlik veriyi 8 ve 4 bit paketliyor
+	  //adcValueLow = (adcValue & 0x0F) << 4;  // Düşük 4 bit
 
-   // HAL_CAN_AddTxMessage(&hcan, &pTXHeader, &deger, &pTxMailbox);
+	  //data[0] = adcValueHigh; //gönderilmesi için değerleri dizide tutuyor
+	 // data[1] = adcValueLow;
 
-   Set_PWM_Duty(rcount);
+     // HAL_CAN_AddTxMessage(&hcan, &pTXHeader, data, &pTxMailbox); //bu iki değeri gönderiyor
+	  adcValueHigh = data[0]; //okunan data değerleri 8 ve 4 bit olarak toplam 12 bit oluyor
+	  adcValueLow = data[1];
+
+	 // 12 bitlik ADC değerini yeniden oluşturun
+	 rcount = (adcValueHigh << 4) | (adcValueLow >> 4); // değerleri toplayarak 16 bitlik değeşkene 12 bitlik adc değeri olcak şekilde atıyor
+
+   Set_PWM_Duty(rcount); //pwm fonksiyonuna bu değeri gönderiyor
 
   }
   /* USER CODE END 3 */
