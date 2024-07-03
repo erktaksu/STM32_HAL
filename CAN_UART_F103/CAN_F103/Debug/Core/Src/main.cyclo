@@ -1,0 +1,11 @@
+../Core/Src/main.c:100:6:Set_PWM_Duty	1
+../Core/Src/main.c:105:6:Set_PWM_Duty2	1
+../Core/Src/main.c:110:6:Set_PWM_Duty3	1
+../Core/Src/main.c:121:5:main	46
+../Core/Src/main.c:324:6:SystemClock_Config	4
+../Core/Src/main.c:371:13:MX_ADC1_Init	3
+../Core/Src/main.c:418:13:MX_CAN_Init	2
+../Core/Src/main.c:455:13:MX_TIM1_Init	7
+../Core/Src/main.c:528:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:561:13:MX_GPIO_Init	1
+../Core/Src/main.c:614:6:Error_Handler	1
